@@ -1,0 +1,69 @@
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+data/aurafit.db
+data/aurafit_backup.db
+data/test.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs/
+*.log
+*_log.txt
+
+# Streamlit
+.streamlit/secrets.toml
+.streamlit/cache/
+
+# OS
+.DS_Store
+Thumbs.db
+.directory
+
+# Project specific
+audio_output/
+temp/
+*.mp3
+*.wav
