@@ -1,5 +1,5 @@
 """
-Victim/Citizen Interface for AuraFit
+Victim/Citizen Interface for C.A.R.S
 Multimodal input (photo, voice, text) for emergency guidance
 """
 
@@ -34,7 +34,7 @@ if "guidance_generated" not in st.session_state:
     st.session_state.guidance_generated = False
 
 st.set_page_config(
-    page_title="AuraFit - Emergency Help",
+    page_title="C.A.R.S.: Crisis AI Response System",
     page_icon="🚨",
     layout="centered",
     initial_sidebar_state="collapsed"
@@ -66,7 +66,7 @@ db = init_database()
 def main():
     st.markdown("""
     <div class="emergency-banner">
-    🚨 AuraFit Report System
+    🚨 C.A.R.S.: Crisis AI Response System
     </div>
     """, unsafe_allow_html=True)
     
@@ -118,7 +118,7 @@ def main():
             if not image_raw_bytes:
                 st.error("⚠️ We need a photo to assess hazards. Please take or upload a photo.")
             else:
-                with st.spinner("🔄 AuraFit is analyzing the scene..."):
+                with st.spinner("🔄 C.A.R.S is analyzing the scene..."):
                     try:
                         image_bytes = process_uploaded_image(image_raw_bytes) if validate_image(image_raw_bytes) else None
                         audio_text = transcribe_audio(audio_data) if audio_data else None

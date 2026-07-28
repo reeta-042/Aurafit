@@ -1,5 +1,5 @@
 """
-Agency Dispatch Center for AuraFit
+Agency Dispatch Center for C.A.R.S
 Real-time incident management for NEMA/SEMA and emergency services
 """
 
@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 st.set_page_config(
-    page_title="AuraFit - Dispatch",
+    page_title="C.A.R.S - Dispatch",
     page_icon="",
     layout="wide",
     initial_sidebar_state="collapsed"
