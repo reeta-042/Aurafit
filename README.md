@@ -316,15 +316,6 @@ To extend AuraFit:
 2. **Custom hazard detection**: Extend hazard list in `function_executor.py`
 3. **New language support**: Configure in `audio_processor.py`
 4. **Custom analytics**: Add queries to `database.py` and charts to `responder_dashboard.py`
-
-## ⚠️ Important Notes
-
-- **API Key Security**: Never commit `.env` files or API keys to version control
-- **Latency Expectations**: First requests may take 2-3 seconds due to model initialization
-- **Image Quality**: Clear, well-lit photos improve hazard detection accuracy
-- **Audio Quality**: Speak clearly; background noise may affect transcription
-- **Network Independence**: Switch to offline mode when internet unavailable
-
 ## 📞 Support & Documentation
 
 - **Gemma API Docs**: https://ai.google.dev/gemma
