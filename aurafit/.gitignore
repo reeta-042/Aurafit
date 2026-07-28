@@ -4,6 +4,7 @@
 .env.*.local
 *.key
 *.pem
+venv/
 
 # Python
 __pycache__/

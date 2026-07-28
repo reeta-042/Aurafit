@@ -11,11 +11,11 @@ AuraFit operates on a dual-interface architecture:
 1. **Victim Interface ("Panic Mode"):** A frictionless, web-based capture portal. Users upload a scene photo and a voice note in their native language (English, Pidgin, Hausa, Yoruba, Igbo). 
 2. **Responder Dashboard:** A high-contrast, centralized GIS command center. It pulls structured incident reports from the database and ranks them by AI-assigned triage priority.
 
-**Tech Stack:** Python 3.12 | Streamlit | SQLite | Google GenAI SDK (Gemma 2) | Plotly
+**Tech Stack:** Python 3.12 | Streamlit | SQLite | Google GenAI SDK (Gemma 4) | Plotly
 
 ## The Gemma Implementation
 
-Instead of relying on standard text generation, AuraFit leverages **Gemma 2 (gemma-2-9b-it)** strictly for **multimodal function calling**. 
+Instead of relying on standard text generation, AuraFit leverages **Gemma 4(gemma-4-26b-a4b-it)** strictly for **multimodal function calling**. 
 
 The model ingests raw audio transcripts and scene imagery, and is forced to output a strict JSON schema defining:
 - `incident_type` (e.g., FIRE_OUTBREAK, STRUCTURAL_COLLAPSE)
@@ -69,7 +69,7 @@ pip install -r requirements.txt
 Copy the `.env.example` file to a new file named `.env` and inject your Google API key:
 ```env
 GOOGLE_API_KEY=your_actual_key_here
-GEMMA_MODEL=gemma-2-9b-it
+GEMMA_MODEL=gemma-4-26b-a4b-it
 ```
 
 **5. Launch the Infrastructure**
