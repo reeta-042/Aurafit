@@ -7,6 +7,7 @@ import logging
 import io
 import os
 from typing import Optional
+from gtts import gTTS
 import speech_recognition as sr
 
 logger = logging.getLogger(__name__)
@@ -57,33 +58,19 @@ def transcribe_audio(audio_bytes: bytes) -> Optional[str]:
         return None
 
 
-def text_to_speech(text: str, output_file: Optional[str] = None) -> Optional[bytes]:
-    """
-    Convert text to speech using pyttsx3 (offline)
-    """
-    engine = get_tts_engine()
-    if not engine:
-        logger.error("TTS Engine is not available on this server.")
-        return None
 
+def text_to_speech(text: str, output_file: Optional[str] = None) -> Optional[bytes]:
     try:
         if output_file:
-            engine.save_to_file(text, output_file)
-            engine.runAndWait()
-
-            # Verify file exists before opening
+            tts = gTTS(text=text, lang='en')
+            tts.save(output_file)
+            
             if os.path.exists(output_file):
                 with open(output_file, 'rb') as f:
                     audio_bytes = f.read()
                 logger.info(f"TTS audio generated: {len(audio_bytes)} bytes")
                 return audio_bytes
-            else:
-                logger.error(f"TTS output file not found at {output_file}")
-                return None
-        else:
-            logger.warning("In-memory TTS not fully supported, using file approach")
-            return None
-
+        return None
     except Exception as e:
         logger.error(f"Error in text-to-speech: {e}")
         return None
