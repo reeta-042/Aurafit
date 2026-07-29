@@ -204,7 +204,7 @@ def main():
             with st.spinner("Generating audio..."):
                 speech_content = f"{calm_msg if calm_msg else ''}. Here are your steps: " + " ".join(get_safe_actions(actions))
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp_file:
-                temp_audio_path = tmp_file.name
+                    temp_audio_path = tmp_file.name
                 result = text_to_speech(speech_content, output_file=temp_audio_path)
                 if result and os.path.exists(temp_audio_path):
                     st.audio(temp_audio_path, format="audio/mp3", autoplay=True)
