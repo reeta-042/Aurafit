@@ -15,7 +15,7 @@ import logging
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
-from src.core.database import AuraFitDatabase
+from ..src.core.database import AuraFitDatabase
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
