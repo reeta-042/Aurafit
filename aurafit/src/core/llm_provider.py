@@ -8,6 +8,7 @@ import json
 import base64
 import logging
 from typing import Optional, Tuple, Dict, Any
+import streamlit as st
 from google import genai
 
 logger = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ class GemmaAPIProvider:
             api_key: Google API key (defaults to GOOGLE_API_KEY env var)
             model_name: Model name to use (e.g., "gemma-4-26b-a4b-it")
         """
-        self.api_key = api_key or os.getenv("GOOGLE_API_KEY")
+        self.api_key = api_key or os.getenv("GOOGLE_API_KEY") or st.secrets.get("GOOGLE_API_KEY")
         if not self.api_key:
             raise ValueError("GOOGLE_API_KEY environment variable not set")
         
