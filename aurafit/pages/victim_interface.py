@@ -194,12 +194,22 @@ def main():
         for i, action in enumerate(actions, 1):
             st.markdown(f'<div class="guidance-step"><b>Step {i}:</b> {action}</div>', unsafe_allow_html=True)
             
+        #if st.button("🔊 Read Instructions Aloud", use_container_width=True):
+            #with st.spinner("Generating audio..."):
+                #speech_content = f"{calm_msg if calm_msg else ''}. Here are your steps: " + " ".join(get_safe_actions(actions))
+               # audio_bytes = text_to_speech(speech_content, output_file=tempfile.mktemp(suffix=".mp3"))
+                #if audio_bytes:
+                  #  st.audio(audio_bytes, format="audio/mp3", autoplay=True)
         if st.button("🔊 Read Instructions Aloud", use_container_width=True):
             with st.spinner("Generating audio..."):
                 speech_content = f"{calm_msg if calm_msg else ''}. Here are your steps: " + " ".join(get_safe_actions(actions))
-                audio_bytes = text_to_speech(speech_content, output_file=tempfile.mktemp(suffix=".mp3"))
-                if audio_bytes:
-                    st.audio(audio_bytes, format="audio/mp3", autoplay=True)
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp_file:
+                temp_audio_path = tmp_file.name
+                result = text_to_speech(speech_content, output_file=temp_audio_path)
+                if result and os.path.exists(temp_audio_path):
+                    st.audio(temp_audio_path, format="audio/mp3", autoplay=True)
+                else:
+                    st.error("Could not generate audio output.")
 
         if incident.get("hazards_detected"):
             st.markdown("### ⚠️ Hazards to Avoid")
