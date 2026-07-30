@@ -1,5 +1,5 @@
 ﻿from pathlib import Path
-import runpy
+import importlib.util
 import streamlit as st
 
 ROOT_DIR = Path(__file__).resolve().parent
@@ -12,6 +12,16 @@ st.set_page_config(
 
 if "view" not in st.session_state:
     st.session_state.view = "home"
+
+
+def load_module(module_name, relative_path):
+    path = ROOT_DIR / relative_path
+    spec = importlib.util.spec_from_file_location(module_name, path)
+    if spec is None or spec.loader is None:
+        raise FileNotFoundError(f"Module not found: {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def show_home():
@@ -44,12 +54,16 @@ def show_home():
 
 def show_victim_page():
     st.session_state.view = "victim"
-    runpy.run_path(str(ROOT_DIR / "app_pages" / "victim_interface.py"), run_name="__main__")
+    module = load_module("victim_app", "app_pages/victim_interface.py")
+    if hasattr(module, "main"):
+        module.main()
 
 
 def show_responder_page():
     st.session_state.view = "responder"
-    runpy.run_path(str(ROOT_DIR / "app_pages" / "2_responder_dashboard.py"), run_name="__main__")
+    module = load_module("responder_app", "app_pages/2_responder_dashboard.py")
+    if hasattr(module, "main"):
+        module.main()
 
 
 if st.session_state.view == "victim":
