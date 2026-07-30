@@ -32,6 +32,10 @@ def show_home():
         </div>
     """, unsafe_allow_html=True)
 
+    if st.button("🏠 Back to Home", use_container_width=True):
+        st.session_state.view = "home"
+        st.rerun()
+
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("<div style='background: white; padding: 24px; border-radius: 18px; box-shadow: 0 4px 24px rgba(0,0,0,0.04); text-align: center;'>", unsafe_allow_html=True)
@@ -54,6 +58,9 @@ def show_home():
 
 def show_victim_page():
     st.session_state.view = "victim"
+    if st.button("🏠 Back to Home", use_container_width=True):
+        st.session_state.view = "home"
+        st.rerun()
     module = load_module("victim_app", "app_pages/victim_interface.py")
     if hasattr(module, "main"):
         module.main()
@@ -61,6 +68,9 @@ def show_victim_page():
 
 def show_responder_page():
     st.session_state.view = "responder"
+    if st.button("🏠 Back to Home", use_container_width=True):
+        st.session_state.view = "home"
+        st.rerun()
     module = load_module("responder_app", "app_pages/2_responder_dashboard.py")
     if hasattr(module, "main"):
         module.main()
