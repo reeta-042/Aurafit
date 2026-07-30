@@ -24,6 +24,13 @@ def load_module(module_name, relative_path):
     return module
 
 
+def get_cached_module(module_name, relative_path):
+    cache_key = f"{module_name}_module"
+    if cache_key not in st.session_state:
+        st.session_state[cache_key] = load_module(module_name, relative_path)
+    return st.session_state[cache_key]
+
+
 def show_home():
     st.markdown("""
         <div style='text-align: center; padding: 40px;'>
@@ -57,7 +64,7 @@ def show_victim_page():
     if st.button("🏠 Back to Home", use_container_width=True):
         st.session_state.view = "home"
         st.rerun()
-    module = load_module("victim_app", "app_pages/victim_interface.py")
+    module = get_cached_module("victim_app", "app_pages/victim_interface.py")
     if hasattr(module, "main"):
         module.main()
 
@@ -67,7 +74,7 @@ def show_responder_page():
     if st.button("🏠 Back to Home", use_container_width=True):
         st.session_state.view = "home"
         st.rerun()
-    module = load_module("responder_app", "app_pages/2_responder_dashboard.py")
+    module = get_cached_module("responder_app", "app_pages/2_responder_dashboard.py")
     if hasattr(module, "main"):
         module.main()
 
