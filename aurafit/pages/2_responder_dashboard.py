@@ -124,15 +124,9 @@ def main():
     
     analytics = db.get_incident_analytics()
 
-    # 2. Handle empty state gracefully without cutting off the code engine entirely
+    # Handle empty state safely without crashing the system execution
     if not analytics or analytics.get("total_incidents", 0) == 0:
         st.info("📡 System online. Awaiting incoming emergency transmissions from the victim portal.")
-        
-        # Optional: Add a button to seed mock data during testing
-        if st.button("Seed Test Incident Data"):
-            # Call a helper to populate a mock row to test maps/charts
-            db.insert_mock_incident() 
-            st.rerun()
         return
 
     # ... rest of your layout code continues safely below ...
