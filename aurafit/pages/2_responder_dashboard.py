@@ -233,5 +233,4 @@ def main():
                             db.update_incident_status(incident['id'], 'RESOLVED')
                             st.rerun()
 
-if __name__ == "__main__":
     main()
