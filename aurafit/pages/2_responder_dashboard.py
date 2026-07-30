@@ -28,10 +28,10 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Apple-Inspired CSS
+
 st.markdown("""
     <style>
-    /* Force Apple System Fonts and Light Gray Background */
+    /* System Fonts and Light Gray Background */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
     
     html, body, [class*="css"] {
@@ -115,7 +115,6 @@ def init_database():
 db = init_database()
 
 def main():
-    # Apple-style floating Nav Bar
     st.markdown("""
     <div class="nav-bar">
         <div class="nav-title">Dispatch Command</div>
