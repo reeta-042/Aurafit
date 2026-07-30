@@ -8,15 +8,15 @@ st.set_page_config(
 )
 
 # 2. Define the pages relative to app.py
-# Make sure these filenames perfectly match what is inside your pages/ folder!
+# Using a non-reserved folder name avoids Streamlit's auto-discovery conflict.
 victim_page = st.Page(
-    "pages/victim_interface.py", 
-    title="Victim Portal", 
+    "app_pages/victim_interface.py",
+    title="Victim Portal",
     icon="🆘"
 )
 responder_hq = st.Page(
-    "pages/2_responder_dashboard.py", 
-    title="Responder Command Center", 
+    "app_pages/2_responder_dashboard.py",
+    title="Responder Command Center",
     icon="🗺️"
 )
 # 3. Create a clean home landing dashboard
