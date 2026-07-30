@@ -52,7 +52,12 @@ def init_llm_provider():
 def init_database():
     return AuraFitDatabase("data/aurafit.db")
 
-llm_provider = init_llm_provider()
+try:
+    llm_provider = init_llm_provider()
+except Exception as e:
+    logger.warning(f"LLM provider unavailable during startup: {e}")
+    llm_provider = None
+
 db = init_database()
 
 def main():
@@ -107,6 +112,9 @@ def main():
         st.write("")
         
         if st.button("🚨 GET IMMEDIATE HELP", use_container_width=True, type="primary"):
+            if llm_provider is None:
+                st.error("⚠️ The AI service is unavailable right now. Please check the environment configuration and try again.")
+                return
             if not image_raw_bytes:
                 st.error("⚠️ We need a photo to assess hazards. Please take or upload a photo.")
             else:

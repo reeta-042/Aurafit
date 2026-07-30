@@ -11,10 +11,14 @@ import speech_recognition as sr
 
 logger = logging.getLogger(__name__)
 
-# Initialize TTS engine
-tts_engine = pyttsx3.init()
-tts_engine.setProperty('rate', 150)  # Slower speech for clarity
-tts_engine.setProperty('volume', 0.9)
+# Initialize TTS engine lazily so the app can still run on systems without espeak.
+tts_engine = None
+try:
+    tts_engine = pyttsx3.init()
+    tts_engine.setProperty('rate', 150)  # Slower speech for clarity
+    tts_engine.setProperty('volume', 0.9)
+except Exception as e:
+    logger.warning(f"TTS unavailable, continuing without speech output: {e}")
 
 
 def transcribe_audio(audio_bytes: bytes) -> Optional[str]:
@@ -66,6 +70,10 @@ def text_to_speech(text: str, output_file: Optional[str] = None) -> Optional[byt
         Audio bytes or None if conversion failed
     """
     try:
+        if tts_engine is None:
+            logger.warning("TTS engine unavailable; skipping speech output")
+            return None
+
         if output_file:
             tts_engine.save_to_file(text, output_file)
             tts_engine.runAndWait()
