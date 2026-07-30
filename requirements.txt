@@ -13,4 +13,3 @@ pydantic==2.5.0
 sqlalchemy==2.0.23
 streamlit-geolocation==0.0.10
 gTTS==2.5.1
-
