@@ -32,14 +32,6 @@ if "incident_data" not in st.session_state:
     st.session_state.incident_data = None
 if "guidance_generated" not in st.session_state:
     st.session_state.guidance_generated = False
-
-st.set_page_config(
-    page_title="C.A.R.S.: Crisis AI Response System",
-    page_icon="🚨",
-    layout="centered",
-    initial_sidebar_state="collapsed"
-)
-
 st.markdown("""
     <style>
     .stApp { background-color: #f8f9fa; color: #202124; }

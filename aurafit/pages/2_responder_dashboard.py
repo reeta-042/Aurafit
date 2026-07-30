@@ -20,13 +20,6 @@ from src.core.database import AuraFitDatabase
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-st.set_page_config(
-    page_title="C.A.R.S - Dispatch",
-    page_icon="",
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
-
 # Apple-Inspired CSS
 st.markdown("""
     <style>
