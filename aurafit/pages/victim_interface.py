@@ -184,7 +184,7 @@ def main():
         if calm_msg:
             st.markdown(f"""
             <div style="background-color: #e8f0fe; border-left: 6px solid #1a73e8; padding: 20px; margin: 20px 0; border-radius: 8px;">
-                <h3 style="margin-top:0; color: #1967d2;">🛡️ Message from AuraFit</h3>
+                <h3 style="margin-top:0; color: #1967d2;">🛡️ Message from C.A.R.S</h3>
                 <p style="font-size: 18px; line-height: 1.5; color: #202124; margin-bottom: 0;">{calm_msg}</p>
             </div>
             """, unsafe_allow_html=True)
