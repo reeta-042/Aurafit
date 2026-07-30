@@ -114,7 +114,7 @@ def init_database():
 db = init_database()
 
 def main():
-    # Apple-style floating Nav Bar
+    # 1. Render the nav bar BEFORE checking data so the layout isn't completely empty
     st.markdown("""
     <div class="nav-bar">
         <div class="nav-title">Dispatch Command</div>
@@ -124,9 +124,18 @@ def main():
     
     analytics = db.get_incident_analytics()
 
-    if analytics.get("total_incidents", 0) == 0:
-        st.info("System online. Awaiting incoming emergency transmissions.")
+    # 2. Handle empty state gracefully without cutting off the code engine entirely
+    if not analytics or analytics.get("total_incidents", 0) == 0:
+        st.info("📡 System online. Awaiting incoming emergency transmissions from the victim portal.")
+        
+        # Optional: Add a button to seed mock data during testing
+        if st.button("Seed Test Incident Data"):
+            # Call a helper to populate a mock row to test maps/charts
+            db.insert_mock_incident() 
+            st.rerun()
         return
+
+    # ... rest of your layout code continues safely below ...
 
     # ==========================================
     # METRICS ROW (Clean, Apple Health style)
