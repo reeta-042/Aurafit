@@ -19,7 +19,6 @@ responder_hq = st.Page(
     title="Responder Command Center", 
     icon="🗺️"
 )
-
 # 3. Create a clean home landing dashboard
 def show_home():
     st.markdown("""
