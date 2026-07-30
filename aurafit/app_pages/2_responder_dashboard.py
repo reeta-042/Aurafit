@@ -190,7 +190,7 @@ def main():
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True, key="triage_breakdown_chart")
 
     # ==========================================
     # SLEEK INCIDENT FEED

@@ -28,7 +28,7 @@ def show_home():
     st.markdown("""
         <div style='text-align: center; padding: 40px;'>
             <h1 style='font-size: 48px; font-weight: 700; letter-spacing: -1px;'>🚨 C.A.R.S. Platform</h1>
-            <p style='color: #86868B; font-size: 20px; font-weight: 500;'>Crisis Action & Response System</p>
+            <p style='color: #86868B; font-size: 20px; font-weight: 500;'>Crisis AI Response System</p>
         </div>
     """, unsafe_allow_html=True)
 
