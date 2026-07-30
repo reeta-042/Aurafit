@@ -1,4 +1,7 @@
+from pathlib import Path
 import streamlit as st
+
+ROOT_DIR = Path(__file__).resolve().parent
 
 # 1. Page Configuration
 st.set_page_config(
@@ -8,14 +11,14 @@ st.set_page_config(
 )
 
 # 2. Define the pages relative to app.py
-# Using a non-reserved folder name avoids Streamlit's auto-discovery conflict.
+# Using absolute paths avoids Streamlit's working-directory resolution issues.
 victim_page = st.Page(
-    "app_pages/victim_interface.py",
+    str(ROOT_DIR / "app_pages" / "victim_interface.py"),
     title="Victim Portal",
     icon="🆘"
 )
 responder_hq = st.Page(
-    "app_pages/2_responder_dashboard.py",
+    str(ROOT_DIR / "app_pages" / "2_responder_dashboard.py"),
     title="Responder Command Center",
     icon="🗺️"
 )
