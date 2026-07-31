@@ -107,6 +107,11 @@ def init_database():
 db = init_database()
 
 def main():
+    if "responder_render_counter" not in st.session_state:
+        st.session_state.responder_render_counter = 0
+    st.session_state.responder_render_counter += 1
+    chart_key = f"triage_breakdown_chart_{st.session_state.responder_render_counter}"
+
     # 1. Render the nav bar BEFORE checking data so the layout isn't completely empty
     st.markdown("""
     <div class="nav-bar">
@@ -190,7 +195,7 @@ def main():
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='rgba(0,0,0,0)'
             )
-            st.plotly_chart(fig, use_container_width=True, key="triage_breakdown_chart")
+            st.plotly_chart(fig, use_container_width=True, key=chart_key)
 
     # ==========================================
     # SLEEK INCIDENT FEED
@@ -233,4 +238,6 @@ def main():
                             db.update_incident_status(incident['id'], 'RESOLVED')
                             st.rerun()
 
+
+if __name__ == "__main__":
     main()
