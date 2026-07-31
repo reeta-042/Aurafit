@@ -127,7 +127,7 @@ def main():
         st.info("📡 System online. Awaiting incoming emergency transmissions from the victim portal.")
         return
 
-    # ... rest of your layout code continues safely below ...
+
 
     # ==========================================
     # METRICS ROW (Clean, Apple Health style)
