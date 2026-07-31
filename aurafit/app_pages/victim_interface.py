@@ -154,30 +154,18 @@ def main():
         st.markdown("### 🎤 1. What is happening?")
         audio_data = st.audio_input("Record voice", label_visibility="collapsed")
 
-        # 2. Unified Camera/Upload Box with Mobile Rear Camera Support
+        # 2. Unified Camera/Upload Box
         st.markdown("### 📷 2. Show us the scene (Required)")
         with st.container(border=True):
             photo_mode = st.radio(
                 "Choose input method:", 
-                ["📸 Rear Camera (Mobile)", "📷 Standard Camera", "📁 Gallery"], 
+                ["📸 Camera", "📁 Gallery"], 
                 horizontal=True, 
                 label_visibility="collapsed"
             )
             image_raw_bytes = None
             
-            if photo_mode == "📸 Rear Camera (Mobile)":
-                st.caption("📱 Tapping below opens your phone's **rear/back camera** for disaster scene capture.")
-                mobile_photo = st.file_uploader(
-                    "Capture scene using Rear Camera", 
-                    type=["jpg", "jpeg", "png"], 
-                    label_visibility="collapsed",
-                    accept_multiple_files=False,
-                    help="On mobile devices, this directly accesses your back camera."
-                )
-                if mobile_photo:
-                    image_raw_bytes = mobile_photo.read()
-                    st.image(image_raw_bytes, use_container_width=True, caption="Captured Scene")
-            elif photo_mode == "📷 Standard Camera":
+            if photo_mode == "📸 Camera":
                 camera_photo = st.camera_input("Capture scene", label_visibility="collapsed")
                 if camera_photo: 
                     image_raw_bytes = camera_photo.getvalue()

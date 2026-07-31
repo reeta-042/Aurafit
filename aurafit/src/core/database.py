@@ -304,16 +304,29 @@ class AuraFitDatabase:
             conn.close()
 
     def get_incident_analytics(self) -> Dict[str, Any]:
-        """Get analytics summary for dashboard"""
+        """Get analytics summary for dashboard across all recorded incidents"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
         try:
-            # Count by priority
+            # Total records in DB
+            cursor.execute("SELECT COUNT(*) FROM incidents")
+            total_records = cursor.fetchone()[0] or 0
+
+            # Count by status
+            cursor.execute("SELECT COUNT(*) FROM incidents WHERE status = 'OPEN'")
+            open_count = cursor.fetchone()[0] or 0
+            
+            cursor.execute("SELECT COUNT(*) FROM incidents WHERE status = 'IN_PROGRESS'")
+            in_progress_count = cursor.fetchone()[0] or 0
+
+            cursor.execute("SELECT COUNT(*) FROM incidents WHERE status = 'RESOLVED'")
+            resolved_count = cursor.fetchone()[0] or 0
+
+            # Count by priority across all logged cases
             cursor.execute("""
                 SELECT incident_priority, COUNT(*) as count
                 FROM incidents
-                WHERE status = 'OPEN'
                 GROUP BY incident_priority
             """)
             
@@ -325,7 +338,6 @@ class AuraFitDatabase:
             cursor.execute("""
                 SELECT incident_type, COUNT(*) as count
                 FROM incidents
-                WHERE status = 'OPEN'
                 GROUP BY incident_type
             """)
             
@@ -337,7 +349,6 @@ class AuraFitDatabase:
             cursor.execute("""
                 SELECT SUM(casualty_count_estimate) as total_casualties
                 FROM incidents
-                WHERE status = 'OPEN'
             """)
             
             total_casualties = cursor.fetchone()[0] or 0
@@ -346,13 +357,17 @@ class AuraFitDatabase:
             cursor.execute("""
                 SELECT COUNT(*) as evacuation_count
                 FROM incidents
-                WHERE evacuation_required = 1 AND status = 'OPEN'
+                WHERE evacuation_required = 1
             """)
             
             evacuation_count = cursor.fetchone()[0] or 0
             
             return {
-                "total_incidents": sum(priority_counts.values()),
+                "total_records": total_records,
+                "open_incidents": open_count,
+                "active_incidents": open_count + in_progress_count,
+                "resolved_incidents": resolved_count,
+                "total_incidents": total_records,
                 "priority_distribution": priority_counts,
                 "type_distribution": type_counts,
                 "total_casualties": total_casualties,

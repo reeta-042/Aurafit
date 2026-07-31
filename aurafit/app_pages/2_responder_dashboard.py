@@ -101,7 +101,8 @@ def main():
     
     analytics = db.get_incident_analytics()
 
-    if not analytics or analytics.get("total_incidents", 0) == 0:
+    # Only show empty state if total records in database is 0
+    if not analytics or analytics.get("total_records", 0) == 0:
         st.info("📡 System online. Awaiting incoming emergency transmissions from the victim portal.")
         return
 
@@ -113,8 +114,8 @@ def main():
     with c1:
         st.markdown(f"""
         <div class="stat-card">
-            <div class="stat-val" style="color: #007AFF;">{analytics.get('total_incidents', 0)}</div>
-            <div class="stat-lbl">Active Cases</div>
+            <div class="stat-val" style="color: #007AFF;">{analytics.get('total_records', 0)}</div>
+            <div class="stat-lbl">Total Cases Logged</div>
         </div>
         """, unsafe_allow_html=True)
     with c2:
@@ -127,15 +128,15 @@ def main():
     with c3:
         st.markdown(f"""
         <div class="stat-card">
-            <div class="stat-val" style="color: #FF9500;">{analytics.get('priority_distribution', {}).get('YELLOW_DELAYED', 0)}</div>
-            <div class="stat-lbl">Delayed Priority</div>
+            <div class="stat-val" style="color: #FF9500;">{analytics.get('active_incidents', 0)}</div>
+            <div class="stat-lbl">Active Open Cases</div>
         </div>
         """, unsafe_allow_html=True)
     with c4:
         st.markdown(f"""
         <div class="stat-card">
-            <div class="stat-val" style="color: #FF2D55;">{analytics.get('evacuation_required', 0)}</div>
-            <div class="stat-lbl">Evacuations Needed</div>
+            <div class="stat-val" style="color: #34C759;">{analytics.get('resolved_incidents', 0)}</div>
+            <div class="stat-lbl">Resolved Cases</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -175,7 +176,7 @@ def main():
     # ==========================================
     # SLEEK INCIDENT FEED WITH FILTERS
     # ==========================================
-    st.markdown("<h4 style='font-weight: 600; margin-top: 32px; margin-bottom: 16px;'>📡 Active Dispatch Feed</h4>", unsafe_allow_html=True)
+    st.markdown("<h4 style='font-weight: 600; margin-top: 32px; margin-bottom: 16px;'>📡 Incident Dispatch Feed</h4>", unsafe_allow_html=True)
     
     f1, f2 = st.columns(2)
     with f1:
@@ -246,17 +247,14 @@ def main():
 
                 with d2:
                     st.write(f"**Current Case Status:** `{status_str}`")
-                    if status_str == 'OPEN':
-                        if st.button("Dispatch Rescue Team", key=f"inprog_{incident['id']}", type="primary", use_container_width=True):
-                            db.update_incident_status(incident['id'], 'IN_PROGRESS')
-                            st.rerun()
-                    elif status_str == 'IN_PROGRESS':
-                        if st.button("Mark Case Resolved", key=f"resolved_{incident['id']}", use_container_width=True):
-                            db.update_incident_status(incident['id'], 'RESOLVED')
+                    if status_str == 'RESOLVED':
+                        st.button("✅ Resolved", key=f"resolved_done_{incident['id']}", disabled=True, use_container_width=True)
+                        if st.button("🔄 Re-open Case", key=f"reopen_{incident['id']}", use_container_width=True):
+                            db.update_incident_status(incident['id'], 'OPEN')
                             st.rerun()
                     else:
-                        if st.button("Re-open Case", key=f"reopen_{incident['id']}", use_container_width=True):
-                            db.update_incident_status(incident['id'], 'OPEN')
+                        if st.button("🚨 Dispatch Team", key=f"dispatch_{incident['id']}", type="primary", use_container_width=True):
+                            db.update_incident_status(incident['id'], 'RESOLVED')
                             st.rerun()
 
 if __name__ == "__main__":

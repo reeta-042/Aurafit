@@ -7,15 +7,17 @@ import logging
 import os
 import io
 from typing import Optional
-import speech_recognition as sr
-from gtts import gTTS
+try:
+    from gtts import gTTS
+except ImportError:
+    gTTS = None
 
 logger = logging.getLogger(__name__)
 
 # Google TTS fallback for Streamlit Cloud environments without local espeak support.
 def _build_tts_audio(text: str) -> Optional[bytes]:
     try:
-        if not text or not text.strip():
+        if not text or not text.strip() or gTTS is None:
             return None
 
         tts = gTTS(text=text, lang="en", slow=False)
