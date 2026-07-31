@@ -5,35 +5,27 @@ Handles speech recognition and text-to-speech conversion
 
 import logging
 import os
-import pyttsx3
+import io
 from typing import Optional
 import speech_recognition as sr
+from gtts import gTTS
 
 logger = logging.getLogger(__name__)
 
-# Initialize TTS engine lazily so the app can still run on systems without espeak.
-tts_engine = None
-
-def _init_tts_engine():
-    global tts_engine
-    if tts_engine is not None:
-        return tts_engine
-
+# Google TTS fallback for Streamlit Cloud environments without local espeak support.
+def _build_tts_audio(text: str) -> Optional[bytes]:
     try:
-        if os.environ.get("STREAMLIT_SERVER_HEADLESS", "false").lower() == "true":
-            logger.info("Headless Streamlit environment detected; skipping TTS engine init")
+        if not text or not text.strip():
             return None
 
-        tts_engine = pyttsx3.init()
-        tts_engine.setProperty('rate', 150)
-        tts_engine.setProperty('volume', 0.9)
-        return tts_engine
+        tts = gTTS(text=text, lang="en", slow=False)
+        buffer = io.BytesIO()
+        tts.write_to_fp(buffer)
+        buffer.seek(0)
+        return buffer.getvalue()
     except Exception as e:
-        logger.warning(f"TTS unavailable, continuing without speech output: {e}")
+        logger.warning(f"Google TTS unavailable: {e}")
         return None
-
-
-_init_tts_engine()
 
 
 def transcribe_audio(audio_bytes: bytes) -> Optional[str]:
@@ -75,35 +67,24 @@ def transcribe_audio(audio_bytes: bytes) -> Optional[str]:
 
 def text_to_speech(text: str, output_file: Optional[str] = None) -> Optional[bytes]:
     """
-    Convert text to speech using pyttsx3 (offline)
-    
-    Args:
-        text: Text to convert
-        output_file: Optional file path to save audio
-        
-    Returns:
-        Audio bytes or None if conversion failed
+    Convert text to speech using Google TTS.
+    This avoids the local espeak dependency that is missing in Streamlit Cloud.
     """
     try:
-        engine = _init_tts_engine()
-        if engine is None:
-            logger.warning("TTS engine unavailable; skipping speech output")
+        audio_bytes = _build_tts_audio(text)
+        if audio_bytes is None:
+            logger.warning("Google TTS unavailable; skipping speech output")
             return None
 
         if output_file:
-            engine.save_to_file(text, output_file)
-            engine.runAndWait()
-            
-            # Read the file
-            with open(output_file, 'rb') as f:
-                audio_bytes = f.read()
+            with open(output_file, "wb") as f:
+                f.write(audio_bytes)
             logger.info(f"TTS audio generated: {len(audio_bytes)} bytes")
             return audio_bytes
-        else:
-            # In-memory conversion (less reliable)
-            logger.warning("In-memory TTS not fully supported, using file approach")
-            return None
-            
+
+        logger.info(f"TTS audio generated: {len(audio_bytes)} bytes")
+        return audio_bytes
+
     except Exception as e:
         logger.error(f"Error in text-to-speech: {e}")
         return None
