@@ -34,13 +34,82 @@ if "guidance_generated" not in st.session_state:
     st.session_state.guidance_generated = False
 st.markdown("""
     <style>
-    .stApp { background-color: #f8f9fa; color: #202124; }
-    .material-card { background-color: #ffffff; padding: 24px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 24px; border: 1px solid #e8eaed; }
-    .emergency-banner { background-color: #d93025; color: white; padding: 16px; border-radius: 12px; font-size: 22px; font-weight: 600; text-align: center; margin-bottom: 24px; box-shadow: 0 4px 6px rgba(217, 48, 37, 0.2); }
-    .guidance-step { background-color: #e6f4ea; border-left: 6px solid #1e8e3e; padding: 16px; margin: 12px 0; border-radius: 8px; color: #137333; font-size: 16px; font-weight: 500; }
-    .hazard-warning { background-color: #fce8e6; border-left: 6px solid #d93025; padding: 16px; margin: 12px 0; border-radius: 8px; color: #c5221f; font-size: 15px; font-weight: 500; }
-    .triage-tag { color: white; padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; }
-    [data-testid="stAudioInput"] { background-color: #fce8e6; padding: 10px; border-radius: 10px; border: 2px dashed #d93025; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    html, body, [class*="css"] {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .emergency-banner {
+        background: linear-gradient(135deg, #d93025 0%, #b31412 100%);
+        color: #ffffff !important;
+        padding: 18px 24px;
+        border-radius: 14px;
+        font-size: 24px;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 24px;
+        box-shadow: 0 6px 18px rgba(217, 48, 37, 0.3);
+        letter-spacing: -0.5px;
+    }
+
+    .guidance-step {
+        background-color: rgba(30, 142, 62, 0.12);
+        border-left: 6px solid #1e8e3e;
+        padding: 16px;
+        margin: 12px 0;
+        border-radius: 10px;
+        color: var(--text-color, inherit);
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 1.5;
+    }
+
+    .hazard-warning {
+        background-color: rgba(217, 48, 37, 0.12);
+        border-left: 6px solid #d93025;
+        padding: 16px;
+        margin: 12px 0;
+        border-radius: 10px;
+        color: var(--text-color, inherit);
+        font-size: 15px;
+        font-weight: 500;
+        line-height: 1.5;
+    }
+
+    .calm-box {
+        background-color: rgba(26, 115, 232, 0.12);
+        border-left: 6px solid #1a73e8;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 12px;
+        color: var(--text-color, inherit);
+    }
+
+    .calm-box h3 {
+        color: #1a73e8 !important;
+        margin-top: 0;
+        font-weight: 600;
+    }
+
+    .triage-tag {
+        color: #ffffff !important;
+        padding: 14px;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 18px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    [data-testid="stAudioInput"] {
+        background-color: rgba(217, 48, 37, 0.08);
+        padding: 12px;
+        border-radius: 12px;
+        border: 2px dashed #d93025;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -85,26 +154,44 @@ def main():
         st.markdown("### 🎤 1. What is happening?")
         audio_data = st.audio_input("Record voice", label_visibility="collapsed")
 
-        # 2. Unified Camera/Upload Box
+        # 2. Unified Camera/Upload Box with Mobile Rear Camera Support
         st.markdown("### 📷 2. Show us the scene (Required)")
         with st.container(border=True):
-            photo_mode = st.radio("Choose input method:", ["📸 Camera", "📁 Gallery"], horizontal=True, label_visibility="collapsed")
+            photo_mode = st.radio(
+                "Choose input method:", 
+                ["📸 Rear Camera (Mobile)", "📷 Standard Camera", "📁 Gallery"], 
+                horizontal=True, 
+                label_visibility="collapsed"
+            )
             image_raw_bytes = None
-            if photo_mode == "📸 Camera":
+            
+            if photo_mode == "📸 Rear Camera (Mobile)":
+                st.caption("📱 Tapping below opens your phone's **rear/back camera** for disaster scene capture.")
+                mobile_photo = st.file_uploader(
+                    "Capture scene using Rear Camera", 
+                    type=["jpg", "jpeg", "png"], 
+                    label_visibility="collapsed",
+                    accept_multiple_files=False,
+                    help="On mobile devices, this directly accesses your back camera."
+                )
+                if mobile_photo:
+                    image_raw_bytes = mobile_photo.read()
+                    st.image(image_raw_bytes, use_container_width=True, caption="Captured Scene")
+            elif photo_mode == "📷 Standard Camera":
                 camera_photo = st.camera_input("Capture scene", label_visibility="collapsed")
-                if camera_photo: image_raw_bytes = camera_photo.getvalue()
+                if camera_photo: 
+                    image_raw_bytes = camera_photo.getvalue()
             else:
-                uploaded_image = st.file_uploader("Select an image", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
+                uploaded_image = st.file_uploader("Select an image from gallery", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
                 if uploaded_image: 
                     image_raw_bytes = uploaded_image.read()
-                    st.image(image_raw_bytes, use_container_width=True)
+                    st.image(image_raw_bytes, use_container_width=True, caption="Uploaded Image")
 
         # 3. Location Auto-Grab
         geo_location = None
         if streamlit_geolocation:
             geo_location = streamlit_geolocation()
             
-        # Hidden Text Input (Removed the Syntax Error here)
         with st.expander("📝 I cannot speak (Type instead)"):
             text_input = st.text_area("Describe the emergency:", height=100)
             landmark_input = st.text_input("Nearby Landmark:")
@@ -123,7 +210,16 @@ def main():
                         image_bytes = process_uploaded_image(image_raw_bytes) if validate_image(image_raw_bytes) else None
                         audio_text = transcribe_audio(audio_data) if audio_data else None
 
-                        gps_str = f"{geo_location['latitude']:.5f}, {geo_location['longitude']:.5f}" if geo_location and geo_location.get("latitude") else None
+                        gps_str = None
+                        lat_val = None
+                        lon_val = None
+                        if geo_location and geo_location.get("latitude") is not None:
+                            try:
+                                lat_val = float(geo_location["latitude"])
+                                lon_val = float(geo_location["longitude"])
+                                gps_str = f"{lat_val:.5f}, {lon_val:.5f}"
+                            except (ValueError, TypeError):
+                                pass
 
                         analysis_prompt = f"""Victim Report:
                         User Selected Language: {selected_language}
@@ -145,8 +241,15 @@ def main():
                         incident_data = parse_function_call(response_text, function_call_data)
                         
                         if incident_data:
-                            if gps_str: incident_data["gps_coordinates"] = gps_str
-                            if landmark_input: incident_data["location_description"] = landmark_input
+                            # Attach location, language, and GPS data explicitly
+                            if gps_str: 
+                                incident_data["gps_coordinates"] = gps_str
+                            if lat_val is not None and lon_val is not None:
+                                incident_data["latitude"] = lat_val
+                                incident_data["longitude"] = lon_val
+                            if landmark_input: 
+                                incident_data["location_description"] = landmark_input
+                            incident_data["communication_language"] = selected_language
                             
                             db.insert_incident(incident_data)
                             st.session_state.incident_data = incident_data
@@ -156,8 +259,8 @@ def main():
                             st.error("Failed to analyze. Please try again.")
                             
                     except Exception as e:
-                        logger.error(f"Error: {e}")
-                        st.error("System error. Please try again.")
+                        logger.error(f"Error analyzing emergency report: {e}")
+                        st.error("System error while processing report. Please try again.")
 
     else:
         incident = st.session_state.incident_data
@@ -168,8 +271,10 @@ def main():
             st.rerun()
 
         priority_color_map = {
-            "RED_IMMEDIATE": "#d93025", "YELLOW_DELAYED": "#f29900", 
-            "GREEN_MINOR": "#1e8e3e", "BLACK_EXPECTANT": "#202124"
+            "RED_IMMEDIATE": "#d93025", 
+            "YELLOW_DELAYED": "#f29900", 
+            "GREEN_MINOR": "#1e8e3e", 
+            "BLACK_EXPECTANT": "#202124"
         }
         priority = incident.get("incident_priority", "YELLOW_DELAYED")
         
@@ -182,9 +287,9 @@ def main():
         calm_msg = incident.get("victim_calm_response")
         if calm_msg:
             st.markdown(f"""
-            <div style="background-color: #e8f0fe; border-left: 6px solid #1a73e8; padding: 20px; margin: 20px 0; border-radius: 8px;">
-                <h3 style="margin-top:0; color: #1967d2;">🛡️ Message from AuraFit</h3>
-                <p style="font-size: 18px; line-height: 1.5; color: #202124; margin-bottom: 0;">{calm_msg}</p>
+            <div class="calm-box">
+                <h3>🛡️ Message from AuraFit</h3>
+                <p style="font-size: 18px; line-height: 1.5; margin-bottom: 0;">{calm_msg}</p>
             </div>
             """, unsafe_allow_html=True)
         
