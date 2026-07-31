@@ -135,31 +135,32 @@ def main():
     c1, c2, c3, c4 = st.columns(4)
     
     with c1:
+        st.container()
         st.markdown(f"""
-        <div class="apple-card">
-            <div class="metric-value" style="color: #007AFF;">{analytics.get('total_incidents', 0)}</div>
-            <div class="metric-label">Active Cases</div>
+        <div style="background: white; border-radius: 16px; padding: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); margin-bottom: 12px;">
+            <div style="font-size: 32px; font-weight: 700; color: #007AFF;">{analytics.get('total_incidents', 0)}</div>
+            <div style="font-size: 12px; font-weight: 600; color: #86868B; text-transform: uppercase; letter-spacing: 0.5px;">Active Cases</div>
         </div>
         """, unsafe_allow_html=True)
     with c2:
         st.markdown(f"""
-        <div class="apple-card">
-            <div class="metric-value" style="color: #FF3B30;">{analytics.get('priority_distribution', {}).get('RED_IMMEDIATE', 0)}</div>
-            <div class="metric-label">Critical Priority</div>
+        <div style="background: white; border-radius: 16px; padding: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); margin-bottom: 12px;">
+            <div style="font-size: 32px; font-weight: 700; color: #FF3B30;">{analytics.get('priority_distribution', {}).get('RED_IMMEDIATE', 0)}</div>
+            <div style="font-size: 12px; font-weight: 600; color: #86868B; text-transform: uppercase; letter-spacing: 0.5px;">Critical Priority</div>
         </div>
         """, unsafe_allow_html=True)
     with c3:
         st.markdown(f"""
-        <div class="apple-card">
-            <div class="metric-value" style="color: #FF9500;">{analytics.get('priority_distribution', {}).get('YELLOW_DELAYED', 0)}</div>
-            <div class="metric-label">Delayed Priority</div>
+        <div style="background: white; border-radius: 16px; padding: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); margin-bottom: 12px;">
+            <div style="font-size: 32px; font-weight: 700; color: #FF9500;">{analytics.get('priority_distribution', {}).get('YELLOW_DELAYED', 0)}</div>
+            <div style="font-size: 12px; font-weight: 600; color: #86868B; text-transform: uppercase; letter-spacing: 0.5px;">Delayed Priority</div>
         </div>
         """, unsafe_allow_html=True)
     with c4:
         st.markdown(f"""
-        <div class="apple-card">
-            <div class="metric-value" style="color: #FF2D55;">{analytics.get('evacuation_required', 0)}</div>
-            <div class="metric-label">Evacuations Needed</div>
+        <div style="background: white; border-radius: 16px; padding: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); margin-bottom: 12px;">
+            <div style="font-size: 32px; font-weight: 700; color: #FF2D55;">{analytics.get('evacuation_required', 0)}</div>
+            <div style="font-size: 12px; font-weight: 600; color: #86868B; text-transform: uppercase; letter-spacing: 0.5px;">Evacuations Needed</div>
         </div>
         """, unsafe_allow_html=True)
 

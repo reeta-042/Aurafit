@@ -199,6 +199,8 @@ def main():
                 audio_bytes = text_to_speech(speech_content, output_file=tempfile.mktemp(suffix=".mp3"))
                 if audio_bytes:
                     st.audio(audio_bytes, format="audio/mp3", autoplay=True)
+                else:
+                    st.info("Audio playback is unavailable in this environment, but the safety steps are shown above.")
 
         if incident.get("hazards_detected"):
             st.markdown("### ⚠️ Hazards to Avoid")
