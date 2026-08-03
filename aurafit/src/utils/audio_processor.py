@@ -6,6 +6,7 @@ Handles speech recognition and text-to-speech conversion
 import logging
 import os
 import io
+import speech_recognition as sr
 from typing import Optional
 try:
     from gtts import gTTS
