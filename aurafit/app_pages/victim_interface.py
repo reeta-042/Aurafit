@@ -153,6 +153,14 @@ def main():
         # 1. Panic Mode: Voice First
         st.markdown("### 🎤 1. What is happening?")
         audio_data = st.audio_input("Record voice", label_visibility="collapsed")
+        audio_text = None
+        if audio_data:
+            audio_text = transcribe_audio(audio_data)
+            if audio_text:
+                st.success("Voice transcription detected:")
+                st.write(audio_text)
+            else:
+                st.info("Voice was recorded, but transcription could not be completed. Please try again or type your report.")
 
         # 2. Unified Camera/Upload Box
         st.markdown("### 📷 2. Show us the scene (Required)")
@@ -196,7 +204,9 @@ def main():
                 with st.spinner("🔄 C.A.R.S is analyzing the scene..."):
                     try:
                         image_bytes = process_uploaded_image(image_raw_bytes) if validate_image(image_raw_bytes) else None
-                        audio_text = transcribe_audio(audio_data) if audio_data else None
+                        # Reuse the transcription if already generated from audio input
+                        if audio_text is None and audio_data:
+                            audio_text = transcribe_audio(audio_data)
 
                         gps_str = None
                         lat_val = None

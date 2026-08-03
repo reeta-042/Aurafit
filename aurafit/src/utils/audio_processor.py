@@ -7,7 +7,7 @@ import logging
 import os
 import io
 import speech_recognition as sr
-from typing import Optional
+from typing import Optional, Any
 try:
     from gtts import gTTS
 except ImportError:
@@ -31,27 +31,70 @@ def _build_tts_audio(text: str) -> Optional[bytes]:
         return None
 
 
-def transcribe_audio(audio_bytes: bytes) -> Optional[str]:
+def _read_audio_bytes(audio_source: Any) -> Optional[bytes]:
+    try:
+        if isinstance(audio_source, (bytes, bytearray)):
+            return bytes(audio_source)
+        if isinstance(audio_source, memoryview):
+            return audio_source.tobytes()
+
+        if hasattr(audio_source, "seek"):
+            try:
+                audio_source.seek(0)
+            except Exception:
+                pass
+
+        if hasattr(audio_source, "getvalue"):
+            raw = audio_source.getvalue()
+            if isinstance(raw, memoryview):
+                return raw.tobytes()
+            return raw
+
+        if hasattr(audio_source, "read"):
+            raw = audio_source.read()
+            if isinstance(raw, memoryview):
+                raw = raw.tobytes()
+            if hasattr(audio_source, "seek"):
+                try:
+                    audio_source.seek(0)
+                except Exception:
+                    pass
+            return raw
+    except Exception as e:
+        logger.error(f"Error reading audio source bytes: {e}")
+    return None
+
+
+def transcribe_audio(audio_source: Any) -> Optional[str]:
     """
-    Convert audio bytes to text using speech recognition
-    
+    Convert uploaded or raw audio data to text using speech recognition.
+
     Args:
-        audio_bytes: Raw audio data
-        
+        audio_source: Raw audio bytes, file-like object, or Streamlit UploadedFile
+
     Returns:
         Transcribed text or None if recognition failed
     """
+    audio_bytes = _read_audio_bytes(audio_source)
+    if audio_bytes is None:
+        logger.error(f"Unsupported audio source type: {type(audio_source)}")
+        return None
+    if len(audio_bytes) == 0:
+        logger.warning("Audio source is empty")
+        return None
+
     try:
         recognizer = sr.Recognizer()
-        
-        # Convert bytes to AudioData
-        audio = sr.AudioData(
-            frame_data=audio_bytes,
-            sample_rate=16000,
-            sample_width=2
-        )
-        
-        # Try Google speech recognition (free tier)
+        audio = None
+
+        # Prefer audio file decoding to support WAV/FLAC-style recorded input
+        try:
+            with sr.AudioFile(io.BytesIO(audio_bytes)) as source:
+                audio = recognizer.record(source)
+        except Exception as e:
+            logger.info(f"Audio file parsing failed, falling back to raw PCM bytes: {e}")
+            audio = sr.AudioData(frame_data=audio_bytes, sample_rate=16000, sample_width=2)
+
         try:
             text = recognizer.recognize_google(audio, language="en-NG")
             logger.info(f"Speech recognized: {text[:50]}...")
@@ -62,7 +105,7 @@ def transcribe_audio(audio_bytes: bytes) -> Optional[str]:
         except sr.RequestError as e:
             logger.warning(f"Speech recognition service error: {e}")
             return None
-            
+
     except Exception as e:
         logger.error(f"Error transcribing audio: {e}")
         return None
