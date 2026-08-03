@@ -163,8 +163,21 @@ def main():
         priority_data = analytics.get('priority_distribution', {})
         if priority_data:
             priority_df = pd.DataFrame([{"Priority": k.replace("_", " "), "Count": v} for k, v in priority_data.items()])
-            fig = px.pie(priority_df, values='Count', names='Priority', hole=0.5,
-                         color_discrete_sequence=['#FF3B30', '#FF9500', '#34C759', '#8E8E93'])
+            fig = px.pie(
+                priority_df,
+                values='Count',
+                names='Priority',
+                hole=0.5,
+                color_discrete_map={
+                    'RED IMMEDIATE': '#FF3B30',
+                    'YELLOW DELAYED': '#FF9500',
+                    'GREEN MINOR': '#34C759',
+                    'BLACK EXPECTANT': '#8E8E93'
+                },
+                category_orders={
+                    'Priority': ['RED IMMEDIATE', 'YELLOW DELAYED', 'GREEN MINOR', 'BLACK EXPECTANT']
+                }
+            )
             fig.update_layout(
                 margin=dict(t=0, b=0, l=0, r=0), 
                 showlegend=False,
